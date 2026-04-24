@@ -1,20 +1,13 @@
-package org.llschall.boot.controller;
+package org.llschall.boot.controller
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Component
 
 @Component
-public class CounterModel {
-    private int value = 0;
+class CounterModel {
+    @kotlin.jvm.JvmField
+    var value: Int = 0
 
-    public int getValue() {
-        return value;
-    }
-
-    public void setValue(int value) {
-        this.value = value;
-    }
-
-    public void increment() {
-        this.value++;
+    fun increment() {
+        this.value++
     }
 }

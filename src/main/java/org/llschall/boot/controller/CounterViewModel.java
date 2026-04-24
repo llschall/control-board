@@ -11,11 +11,11 @@ public class CounterViewModel {
     }
 
     public int getCounterValue() {
-        return model.getValue();
+        return model.value;
     }
 
     public String getCounterDisplayText() {
-        return "Count: " + model.getValue();
+        return "Count: " + model.value;
     }
 
     public void incrementCounter() {
