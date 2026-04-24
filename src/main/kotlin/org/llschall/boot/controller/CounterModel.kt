@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class CounterModel {
-    @kotlin.jvm.JvmField
+    @JvmField
     var value: Int = 0
 
     fun increment() {
