@@ -5,7 +5,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '2.3.21'
 }
 
-group = 'org.llschall.boot.controller'
+group = 'org.llschall.control.board'
 version = '0.0.1'
 description = 'control-board'
 

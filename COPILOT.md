@@ -19,7 +19,7 @@
 ### Package Structure
 
 ```
-org.llschall.boot.controller/
+org.llschall.control.board/
 ├── models/          (Data models: CounterModel)
 ├── viewmodels/      (ViewModel classes: CounterViewModel)
 ├── views/           (Swing components: AppWindow)
