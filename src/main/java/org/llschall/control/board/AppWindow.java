@@ -3,19 +3,26 @@ package org.llschall.control.board;
 import org.knowm.xchart.CategoryChart;
 import org.knowm.xchart.CategoryChartBuilder;
 import org.knowm.xchart.XChartPanel;
+import org.llschall.ardwloop.ArdwloopStarter;
+import org.llschall.ardwloop.structure.model.ArdwloopModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GraphicsEnvironment;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,9 +57,11 @@ public class AppWindow {
             JPanel mainPanel = new JPanel(new BorderLayout());
 
             // Top panel with counter control
-            JPanel controlPanel = new JPanel(new FlowLayout());
+            JPanel controlPnl = new JPanel(new FlowLayout());
+            controlPnl.add(new JLabel("Java: "+System.getProperty("java.version")));
+            controlPnl.add(new JLabel("ardwloop: "+ArdwloopStarter.VERSION));
             counterLabel = new JLabel(viewModel.getCounterDisplayText());
-            controlPanel.add(counterLabel);
+            controlPnl.add(counterLabel);
 
             // Increment button (View triggers ViewModel action)
             JButton incrementButton = new JButton("Increment");
@@ -61,14 +70,14 @@ public class AppWindow {
                 updateCounterDisplay();
                 updateChart();
             });
-            controlPanel.add(incrementButton);
+            controlPnl.add(incrementButton);
 
             // Close button
             JButton closeButton = new JButton("Close");
             closeButton.addActionListener(e -> System.exit(0));
-            controlPanel.add(closeButton);
+            controlPnl.add(closeButton);
 
-            mainPanel.add(controlPanel, BorderLayout.NORTH);
+            mainPanel.add(controlPnl, BorderLayout.NORTH);
 
             // Center panel with chart
             chart = createBarChart();
@@ -76,6 +85,17 @@ public class AppWindow {
             mainPanel.add(chartPanel, BorderLayout.CENTER);
 
             frame.add(mainPanel);
+
+            // Add Escape key listener to exit
+            frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                    .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "exitAction");
+            frame.getRootPane().getActionMap().put("exitAction", new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.exit(0);
+                }
+            });
+
             frame.setVisible(true);
         } catch (Exception e) {
             logger.error("Failed to create window", e);
