@@ -3,6 +3,8 @@ package org.llschall.control.board;
 import org.knowm.xchart.CategoryChart;
 import org.knowm.xchart.CategoryChartBuilder;
 import org.knowm.xchart.XChartPanel;
+import org.llschall.ardwloop.ArdwloopStarter;
+import org.llschall.ardwloop.structure.model.ArdwloopModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -55,9 +57,11 @@ public class AppWindow {
             JPanel mainPanel = new JPanel(new BorderLayout());
 
             // Top panel with counter control
-            JPanel controlPanel = new JPanel(new FlowLayout());
+            JPanel controlPnl = new JPanel(new FlowLayout());
+            controlPnl.add(new JLabel("Java: "+System.getProperty("java.version")));
+            controlPnl.add(new JLabel("ardwloop: "+ArdwloopStarter.VERSION));
             counterLabel = new JLabel(viewModel.getCounterDisplayText());
-            controlPanel.add(counterLabel);
+            controlPnl.add(counterLabel);
 
             // Increment button (View triggers ViewModel action)
             JButton incrementButton = new JButton("Increment");
@@ -66,14 +70,14 @@ public class AppWindow {
                 updateCounterDisplay();
                 updateChart();
             });
-            controlPanel.add(incrementButton);
+            controlPnl.add(incrementButton);
 
             // Close button
             JButton closeButton = new JButton("Close");
             closeButton.addActionListener(e -> System.exit(0));
-            controlPanel.add(closeButton);
+            controlPnl.add(closeButton);
 
-            mainPanel.add(controlPanel, BorderLayout.NORTH);
+            mainPanel.add(controlPnl, BorderLayout.NORTH);
 
             // Center panel with chart
             chart = createBarChart();
