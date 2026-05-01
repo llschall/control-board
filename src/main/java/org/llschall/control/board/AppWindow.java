@@ -1,4 +1,4 @@
-package org.llschall.boot.controller;
+package org.llschall.control.board;
 
 import org.knowm.xchart.CategoryChart;
 import org.knowm.xchart.CategoryChartBuilder;
@@ -42,7 +42,7 @@ public class AppWindow {
         }
 
         try {
-            JFrame frame = new JFrame("Boot Controller");
+            JFrame frame = new JFrame("Control Board");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(800, 600);
             frame.setLocationRelativeTo(null);

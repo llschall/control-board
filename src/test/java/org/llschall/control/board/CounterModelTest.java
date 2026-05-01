@@ -1,4 +1,4 @@
-package org.llschall.boot.controller;
+package org.llschall.control.board;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,1 +1,1 @@
-# boot-controller
+# control-board

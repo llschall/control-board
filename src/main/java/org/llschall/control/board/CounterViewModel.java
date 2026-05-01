@@ -1,4 +1,4 @@
-package org.llschall.boot.controller;
+package org.llschall.control.board;
 
 import org.springframework.stereotype.Component;
 
