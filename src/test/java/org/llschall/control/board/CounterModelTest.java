@@ -53,5 +53,12 @@ class CounterModelTest {
         counterModel.increment();
         assertEquals(101, counterModel.value);
     }
+
+    @Test
+    void testSwitchOn() {
+        assertEquals(false, counterModel.switchOn);
+        counterModel.switchOn = true;
+        assertEquals(true, counterModel.switchOn);
+    }
 }
 

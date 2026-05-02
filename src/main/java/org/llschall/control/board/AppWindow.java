@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -74,6 +75,12 @@ public class AppWindow {
                 updateChart();
             });
             controlPnl.add(incrementButton);
+            
+            // Switch button
+            JCheckBox ledBox = new JCheckBox("Led");
+            ledBox.setSelected(viewModel.isSwitchOn());
+            ledBox.addActionListener(e -> viewModel.setSwitchOn(ledBox.isSelected()));
+            controlPnl.add(ledBox);
 
             // Start Ardwloop button
             JButton startButton = new JButton("Start");

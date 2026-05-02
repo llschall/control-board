@@ -21,4 +21,12 @@ public class CounterViewModel {
     public void incrementCounter() {
         model.increment();
     }
+
+    public boolean isSwitchOn() {
+        return model.switchOn;
+    }
+
+    public void setSwitchOn(boolean on) {
+        model.switchOn = on;
+    }
 }
