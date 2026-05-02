@@ -1,7 +1,8 @@
 package org.llschall.control.board;
 
-import org.knowm.xchart.CategoryChart;
-import org.knowm.xchart.CategoryChartBuilder;
+import org.knowm.xchart.XYChart;
+import org.knowm.xchart.XYChartBuilder;
+import org.knowm.xchart.XYSeries;
 import org.knowm.xchart.XChartPanel;
 import org.llschall.ardwloop.ArdwloopStarter;
 import org.llschall.ardwloop.structure.model.ArdwloopModel;
@@ -35,7 +36,7 @@ public class AppWindow {
     private final CounterViewModel viewModel;
     private final ArdwloopService ardwloopService;
     private JLabel counterLabel;
-    private CategoryChart chart;
+    private XYChart chart;
     private final List<Integer> chartHistory;
 
     public AppWindow(CounterViewModel viewModel, ArdwloopService ardwloopService) {
@@ -98,8 +99,8 @@ public class AppWindow {
             mainPanel.add(controlPnl, BorderLayout.NORTH);
 
             // Center panel with chart
-            chart = createBarChart();
-            XChartPanel<CategoryChart> chartPanel = new XChartPanel<>(chart);
+            chart = createCurveChart();
+            XChartPanel<XYChart> chartPanel = new XChartPanel<>(chart);
             mainPanel.add(chartPanel, BorderLayout.CENTER);
 
             frame.add(mainPanel);
@@ -127,8 +128,8 @@ public class AppWindow {
         }
     }
 
-    private CategoryChart createBarChart() {
-        CategoryChart chart = new CategoryChartBuilder()
+    private XYChart createCurveChart() {
+        XYChart chart = new XYChartBuilder()
                 .title("Counter History")
                 .xAxisTitle("Sample")
                 .yAxisTitle("Count Value")
@@ -136,9 +137,12 @@ public class AppWindow {
 
         // Initialize with first data point
         chartHistory.add(viewModel.getCounterValue());
-        List<String> labels = new ArrayList<>(List.of("0"));
+        List<Integer> xData = new ArrayList<>(List.of(0));
 
-        chart.addSeries("Counter Values", labels, chartHistory);
+        XYSeries series = chart.addSeries("Counter Values", xData, chartHistory);
+        chart.getStyler().setToolTipsEnabled(true);
+        chart.getStyler().setToolTipType(org.knowm.xchart.style.Styler.ToolTipType.yLabels);
+        chart.getStyler().setCursorEnabled(true);
         return chart;
     }
 
@@ -159,13 +163,12 @@ public class AppWindow {
         }
 
         // Create labels for x-axis
-        List<String> labels = new ArrayList<>();
+        List<Integer> xData = new ArrayList<>();
         for (int i = 0; i < chartHistory.size(); i++) {
-            labels.add(String.valueOf(i));
+            xData.add(i);
         }
 
         // Update chart
-        chart.removeSeries("Counter Values");
-        chart.addSeries("Counter Values", labels, chartHistory);
+        chart.updateXYSeries("Counter Values", xData, chartHistory, null);
     }
 }
