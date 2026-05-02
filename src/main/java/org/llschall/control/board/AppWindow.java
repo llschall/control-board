@@ -32,12 +32,14 @@ public class AppWindow {
     private static final Logger logger = LoggerFactory.getLogger(AppWindow.class);
 
     private final CounterViewModel viewModel;
+    private final ArdwloopService ardwloopService;
     private JLabel counterLabel;
     private CategoryChart chart;
     private final List<Integer> chartHistory;
 
-    public AppWindow(CounterViewModel viewModel) {
+    public AppWindow(CounterViewModel viewModel, ArdwloopService ardwloopService) {
         this.viewModel = viewModel;
+        this.ardwloopService = ardwloopService;
         this.chartHistory = new ArrayList<>();
     }
 
@@ -72,6 +74,14 @@ public class AppWindow {
                 updateChart();
             });
             controlPnl.add(incrementButton);
+
+            // Start Ardwloop button
+            JButton startButton = new JButton("Start");
+            startButton.addActionListener(e -> {
+                ardwloopService.startArdwloop();
+                startButton.setEnabled(false);
+            });
+            controlPnl.add(startButton);
 
             // Close button
             JButton closeButton = new JButton("Close");

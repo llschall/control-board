@@ -17,7 +17,6 @@ public class ArdwloopService {
         this.bridge = bridge;
     }
 
-    @EventListener(ApplicationReadyEvent.class)
     public void startArdwloop() {
         logger.info("Starting Ardwloop...");
         new Thread(() -> {
