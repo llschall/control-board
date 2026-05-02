@@ -1,7 +1,8 @@
 package org.llschall.control.board;
 
-import org.knowm.xchart.CategoryChart;
-import org.knowm.xchart.CategoryChartBuilder;
+import org.knowm.xchart.XYChart;
+import org.knowm.xchart.XYChartBuilder;
+import org.knowm.xchart.XYSeries;
 import org.knowm.xchart.XChartPanel;
 import org.llschall.ardwloop.ArdwloopStarter;
 import org.llschall.ardwloop.structure.model.ArdwloopModel;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -23,6 +25,7 @@ import java.awt.FlowLayout;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import javax.swing.Timer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,12 +34,15 @@ public class AppWindow {
     private static final Logger logger = LoggerFactory.getLogger(AppWindow.class);
 
     private final CounterViewModel viewModel;
+    private final ArdwloopService ardwloopService;
     private JLabel counterLabel;
-    private CategoryChart chart;
+    private XYChart chart;
+    private XChartPanel<XYChart> chartPanel;
     private final List<Integer> chartHistory;
 
-    public AppWindow(CounterViewModel viewModel) {
+    public AppWindow(CounterViewModel viewModel, ArdwloopService ardwloopService) {
         this.viewModel = viewModel;
+        this.ardwloopService = ardwloopService;
         this.chartHistory = new ArrayList<>();
     }
 
@@ -71,6 +77,20 @@ public class AppWindow {
                 updateChart();
             });
             controlPnl.add(incrementButton);
+            
+            // Switch button
+            JCheckBox ledBox = new JCheckBox("Led");
+            ledBox.setSelected(viewModel.isSwitchOn());
+            ledBox.addActionListener(e -> viewModel.setSwitchOn(ledBox.isSelected()));
+            controlPnl.add(ledBox);
+
+            // Start Ardwloop button
+            JButton startButton = new JButton("Start");
+            startButton.addActionListener(e -> {
+                ardwloopService.startArdwloop();
+                startButton.setEnabled(false);
+            });
+            controlPnl.add(startButton);
 
             // Close button
             JButton closeButton = new JButton("Close");
@@ -80,8 +100,8 @@ public class AppWindow {
             mainPanel.add(controlPnl, BorderLayout.NORTH);
 
             // Center panel with chart
-            chart = createBarChart();
-            XChartPanel<CategoryChart> chartPanel = new XChartPanel<>(chart);
+            chart = createCurveChart();
+            chartPanel = new XChartPanel<>(chart);
             mainPanel.add(chartPanel, BorderLayout.CENTER);
 
             frame.add(mainPanel);
@@ -97,13 +117,20 @@ public class AppWindow {
             });
 
             frame.setVisible(true);
+
+            // Periodically refresh the UI to show updates from Ardwloop
+            Timer timer = new Timer(1000, e -> {
+                updateCounterDisplay();
+                updateChart();
+            });
+            timer.start();
         } catch (Exception e) {
             logger.error("Failed to create window", e);
         }
     }
 
-    private CategoryChart createBarChart() {
-        CategoryChart chart = new CategoryChartBuilder()
+    private XYChart createCurveChart() {
+        XYChart chart = new XYChartBuilder()
                 .title("Counter History")
                 .xAxisTitle("Sample")
                 .yAxisTitle("Count Value")
@@ -111,9 +138,12 @@ public class AppWindow {
 
         // Initialize with first data point
         chartHistory.add(viewModel.getCounterValue());
-        List<String> labels = new ArrayList<>(List.of("0"));
+        List<Integer> xData = new ArrayList<>(List.of(0));
 
-        chart.addSeries("Counter Values", labels, chartHistory);
+        XYSeries series = chart.addSeries("Counter Values", xData, chartHistory);
+        chart.getStyler().setToolTipsEnabled(true);
+        chart.getStyler().setToolTipType(org.knowm.xchart.style.Styler.ToolTipType.yLabels);
+        chart.getStyler().setCursorEnabled(true);
         return chart;
     }
 
@@ -125,14 +155,21 @@ public class AppWindow {
         int currentValue = viewModel.getCounterValue();
         chartHistory.add(currentValue);
 
+        // Keep last 100 points
+        if (chartHistory.size() > 100) {
+            chartHistory.remove(0);
+        }
+
         // Create labels for x-axis
-        List<String> labels = new ArrayList<>();
+        List<Integer> xData = new ArrayList<>();
         for (int i = 0; i < chartHistory.size(); i++) {
-            labels.add(String.valueOf(i));
+            xData.add(i);
         }
 
         // Update chart
-        chart.removeSeries("Counter Values");
-        chart.addSeries("Counter Values", labels, chartHistory);
+        chart.updateXYSeries("Counter Values", xData, chartHistory, null);
+        if (chartPanel != null) {
+            chartPanel.repaint();
+        }
     }
 }
