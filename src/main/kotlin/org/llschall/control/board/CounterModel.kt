@@ -5,12 +5,16 @@ import org.springframework.stereotype.Component
 @Component
 class CounterModel {
     @JvmField
+    @Volatile
     var value: Int = 0
 
     @JvmField
+    @Volatile
     var switchOn: Boolean = false
 
     fun increment() {
-        this.value++
+        if (switchOn) {
+            this.value++
+        }
     }
 }

@@ -26,11 +26,12 @@ void loop() {
 
   if (v == 1) {
     digitalWrite(LED_BUILTIN, HIGH);
+    counter++;
   } else {
     digitalWrite(LED_BUILTIN, LOW);
   }
 
-  ardw_s()->b.v = ++counter;
+  ardw_s()->b.v = counter;
 
   delay(99);
 }

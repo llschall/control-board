@@ -37,6 +37,7 @@ public class AppWindow {
     private final ArdwloopService ardwloopService;
     private JLabel counterLabel;
     private XYChart chart;
+    private XChartPanel<XYChart> chartPanel;
     private final List<Integer> chartHistory;
 
     public AppWindow(CounterViewModel viewModel, ArdwloopService ardwloopService) {
@@ -100,7 +101,7 @@ public class AppWindow {
 
             // Center panel with chart
             chart = createCurveChart();
-            XChartPanel<XYChart> chartPanel = new XChartPanel<>(chart);
+            chartPanel = new XChartPanel<>(chart);
             mainPanel.add(chartPanel, BorderLayout.CENTER);
 
             frame.add(mainPanel);
@@ -118,7 +119,7 @@ public class AppWindow {
             frame.setVisible(true);
 
             // Periodically refresh the UI to show updates from Ardwloop
-            Timer timer = new Timer(100, e -> {
+            Timer timer = new Timer(1000, e -> {
                 updateCounterDisplay();
                 updateChart();
             });
@@ -152,9 +153,6 @@ public class AppWindow {
 
     private void updateChart() {
         int currentValue = viewModel.getCounterValue();
-        if (!chartHistory.isEmpty() && chartHistory.get(chartHistory.size() - 1) == currentValue) {
-            return;
-        }
         chartHistory.add(currentValue);
 
         // Keep last 100 points
@@ -170,5 +168,8 @@ public class AppWindow {
 
         // Update chart
         chart.updateXYSeries("Counter Values", xData, chartHistory, null);
+        if (chartPanel != null) {
+            chartPanel.repaint();
+        }
     }
 }
