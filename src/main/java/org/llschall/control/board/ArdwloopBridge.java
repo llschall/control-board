@@ -20,11 +20,8 @@ public class ArdwloopBridge implements IArdwProgram {
 
     @Override
     public SerialData ardwLoop(SerialData data) {
-        if (model.switchOn) {
-            data.a.v = 1;
-        }
-        model.value = data.a.v;
-        data.b.v = model.value;
+        data.a.v = model.switchOn ? 1 : 0;
+        model.value = data.b.v;
         return data;
     }
 }

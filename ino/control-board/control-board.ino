@@ -1,6 +1,8 @@
 
 #include <Ardwloop.h>
 
+int counter = 0;
+
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
@@ -27,6 +29,8 @@ void loop() {
   } else {
     digitalWrite(LED_BUILTIN, LOW);
   }
-  
+
+  ardw_s()->b.v = ++counter;
+
   delay(99);
 }
