@@ -23,6 +23,7 @@ import java.awt.FlowLayout;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import javax.swing.Timer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,6 +98,13 @@ public class AppWindow {
             });
 
             frame.setVisible(true);
+
+            // Periodically refresh the UI to show updates from Ardwloop
+            Timer timer = new Timer(100, e -> {
+                updateCounterDisplay();
+                updateChart();
+            });
+            timer.start();
         } catch (Exception e) {
             logger.error("Failed to create window", e);
         }
@@ -123,7 +131,15 @@ public class AppWindow {
 
     private void updateChart() {
         int currentValue = viewModel.getCounterValue();
+        if (!chartHistory.isEmpty() && chartHistory.get(chartHistory.size() - 1) == currentValue) {
+            return;
+        }
         chartHistory.add(currentValue);
+
+        // Keep last 100 points
+        if (chartHistory.size() > 100) {
+            chartHistory.remove(0);
+        }
 
         // Create labels for x-axis
         List<String> labels = new ArrayList<>();
