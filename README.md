@@ -6,6 +6,16 @@ This project is a control board application that demonstrates the integration be
 
 
 
+## Getting Started
+
+To clone the repository and run the application:
+
+```bash
+git clone https://github.com/llschall/control-board.git
+cd control-board
+./gradlew bootRun
+```
+
 ## Structure
 
 The project is built using the **Spring Boot** framework, which handles dependency injection and service management. The user interface is implemented using Swing and follows the **MVVM (Model-View-ViewModel)** pattern:
