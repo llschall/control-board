@@ -2,12 +2,16 @@ package org.llschall.control.board;
 
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 public class CounterViewModel {
     private final CounterModel model;
+    private final MeasurementRepository measurementRepository;
 
-    public CounterViewModel(CounterModel model) {
+    public CounterViewModel(CounterModel model, MeasurementRepository measurementRepository) {
         this.model = model;
+        this.measurementRepository = measurementRepository;
     }
 
     public int getCounterValue() {
@@ -20,6 +24,7 @@ public class CounterViewModel {
 
     public void incrementCounter() {
         model.increment();
+        measurementRepository.save(new Measurement(model.value, LocalDateTime.now()));
     }
 
     public boolean isSwitchOn() {
