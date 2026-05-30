@@ -22,6 +22,11 @@ public class CounterViewModel {
         return "Count: " + model.value;
     }
 
+    public void updateCounterValue(int value) {
+        model.value = value;
+        measurementRepository.save(new Measurement(model.value, LocalDateTime.now()));
+    }
+
     public void incrementCounter() {
         model.increment();
         measurementRepository.save(new Measurement(model.value, LocalDateTime.now()));

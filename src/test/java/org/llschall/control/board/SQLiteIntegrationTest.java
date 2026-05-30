@@ -14,6 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SQLiteIntegrationTest {
 
     @Autowired
+    private CounterViewModel counterViewModel;
+
+    @Autowired
     private MeasurementRepository measurementRepository;
 
     @Test
@@ -25,5 +28,23 @@ public class SQLiteIntegrationTest {
         
         assertTrue(retrieved.isPresent());
         assertEquals(42, retrieved.get().getValue());
+    }
+
+    @Test
+    public void testUpdateCounterValueSavesMeasurement() {
+        long initialCount = measurementRepository.count();
+        counterViewModel.updateCounterValue(99);
+        assertEquals(initialCount + 1, measurementRepository.count());
+        
+        // Find the latest measurement
+        Iterable<Measurement> measurements = measurementRepository.findAll();
+        boolean found = false;
+        for (Measurement m : measurements) {
+            if (m.getValue() == 99) {
+                found = true;
+                break;
+            }
+        }
+        assertTrue(found, "Measurement with value 99 should be saved");
     }
 }
