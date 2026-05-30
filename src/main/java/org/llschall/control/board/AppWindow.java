@@ -20,12 +20,16 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.Timer;
+import javax.swing.table.DefaultTableModel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import javax.swing.Timer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +43,7 @@ public class AppWindow {
     private XYChart chart;
     private XChartPanel<XYChart> chartPanel;
     private final List<Integer> chartHistory;
+    private DefaultTableModel tableModel;
 
     public AppWindow(CounterViewModel viewModel, ArdwloopService ardwloopService) {
         this.viewModel = viewModel;
@@ -60,7 +65,10 @@ public class AppWindow {
             frame.setSize(800, 600);
             frame.setLocationRelativeTo(null);
 
-            JPanel mainPanel = new JPanel(new BorderLayout());
+            JTabbedPane tabbedPane = new JTabbedPane();
+
+            // Dashboard Tab
+            JPanel dashboardPanel = new JPanel(new BorderLayout());
 
             // Top panel with counter control
             JPanel controlPnl = new JPanel(new FlowLayout());
@@ -97,14 +105,29 @@ public class AppWindow {
             closeButton.addActionListener(e -> System.exit(0));
             controlPnl.add(closeButton);
 
-            mainPanel.add(controlPnl, BorderLayout.NORTH);
+            dashboardPanel.add(controlPnl, BorderLayout.NORTH);
 
             // Center panel with chart
             chart = createCurveChart();
             chartPanel = new XChartPanel<>(chart);
-            mainPanel.add(chartPanel, BorderLayout.CENTER);
+            dashboardPanel.add(chartPanel, BorderLayout.CENTER);
 
-            frame.add(mainPanel);
+            tabbedPane.addTab("Dashboard", dashboardPanel);
+
+            // Database Tab
+            JPanel databasePanel = new JPanel(new BorderLayout());
+            String[] columnNames = {"ID", "Value", "Timestamp"};
+            tableModel = new DefaultTableModel(columnNames, 0);
+            JTable table = new JTable(tableModel);
+            databasePanel.add(new JScrollPane(table), BorderLayout.CENTER);
+
+            JButton refreshButton = new JButton("Refresh");
+            refreshButton.addActionListener(e -> updateDatabaseTable());
+            databasePanel.add(refreshButton, BorderLayout.SOUTH);
+
+            tabbedPane.addTab("Database", databasePanel);
+
+            frame.add(tabbedPane);
 
             // Add Escape key listener to exit
             frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
@@ -122,6 +145,7 @@ public class AppWindow {
             Timer timer = new Timer(1000, e -> {
                 updateCounterDisplay();
                 updateChart();
+                updateDatabaseTable();
             });
             timer.start();
         } catch (Exception e) {
@@ -170,6 +194,14 @@ public class AppWindow {
         chart.updateXYSeries("Counter Values", xData, chartHistory, null);
         if (chartPanel != null) {
             chartPanel.repaint();
+        }
+    }
+
+    private void updateDatabaseTable() {
+        if (tableModel == null) return;
+        tableModel.setRowCount(0);
+        for (Measurement m : viewModel.getAllMeasurements()) {
+            tableModel.addRow(new Object[]{m.getId(), m.getValue(), m.getTimestamp()});
         }
     }
 }
