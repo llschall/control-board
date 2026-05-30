@@ -34,4 +34,8 @@ public class CounterViewModel {
     public void setSwitchOn(boolean on) {
         model.switchOn = on;
     }
+
+    public Iterable<Measurement> getAllMeasurements() {
+        return measurementRepository.findAll();
+    }
 }
