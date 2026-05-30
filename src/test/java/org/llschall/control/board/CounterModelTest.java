@@ -3,17 +3,21 @@ package org.llschall.control.board;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 class CounterModelTest {
 
+    @Autowired
     private CounterModel counterModel;
 
     @BeforeEach
     void setUp() {
-        counterModel = new CounterModel();
+        // Reset the autowired model's state between tests for isolation
+        counterModel.value = 0;
+        counterModel.switchOn = false;
     }
 
     @Test
