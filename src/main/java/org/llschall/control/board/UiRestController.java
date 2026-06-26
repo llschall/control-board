@@ -43,6 +43,11 @@ public class UiRestController {
         return toDtoList(viewModel.getAllMeasurements());
     }
 
+    @GetMapping("/echo")
+    public ResponseEntity<?> echo(@RequestParam String text) {
+        return ResponseEntity.ok(new EchoDto(text));
+    }
+
     private List<MeasurementDto> toDtoList(Iterable<Measurement> measurements) {
         return ((List<Measurement>) ((measurements instanceof List) ? measurements : toList(measurements)))
                 .stream()
@@ -76,6 +81,14 @@ public class UiRestController {
             this.id = id;
             this.value = value;
             this.timestamp = timestamp;
+        }
+    }
+
+    static class EchoDto {
+        public final String text;
+
+        public EchoDto(String text) {
+            this.text = text;
         }
     }
 }
