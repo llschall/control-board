@@ -4,13 +4,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
 public class UiRestController {
     private final CounterViewModel viewModel;
-    private volatile int echoCallCount = 0;
+    private final AtomicInteger echoCallCount = new AtomicInteger(0);
 
     public UiRestController(CounterViewModel viewModel) {
         this.viewModel = viewModel;
@@ -45,14 +46,14 @@ public class UiRestController {
     }
 
     @GetMapping("/echo")
-    public ResponseEntity<?> echo(@RequestParam String text) {
-        echoCallCount++;
-        return ResponseEntity.ok(new EchoDto(text, echoCallCount));
+    public ResponseEntity<?> echo() {
+        int i = echoCallCount.incrementAndGet();
+        return ResponseEntity.ok(new EchoDto(i));
     }
 
     @GetMapping("/echo-count")
     public ResponseEntity<?> getEchoCount() {
-        return ResponseEntity.ok(new EchoCountDto(echoCallCount));
+        return ResponseEntity.ok(new EchoCountDto(echoCallCount.get()));
     }
 
     private List<MeasurementDto> toDtoList(Iterable<Measurement> measurements) {
@@ -67,46 +68,16 @@ public class UiRestController {
                 java.util.stream.StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList()));
     }
 
-    static class CounterDto {
-        public final int value;
-        public final String display;
-        public final boolean switchOn;
-
-        public CounterDto(int value, String display, boolean switchOn) {
-            this.value = value;
-            this.display = display;
-            this.switchOn = switchOn;
-        }
+    record CounterDto(int value, String display, boolean switchOn) {
     }
 
-    static class MeasurementDto {
-        public final Long id;
-        public final int value;
-        public final String timestamp;
-
-        public MeasurementDto(Long id, int value, String timestamp) {
-            this.id = id;
-            this.value = value;
-            this.timestamp = timestamp;
-        }
+    record MeasurementDto(Long id, int value, String timestamp) {
     }
 
-    static class EchoDto {
-        public final String text;
-        public final int count;
-
-        public EchoDto(String text, int count) {
-            this.text = text;
-            this.count = count;
-        }
+    record EchoDto(int count) {
     }
 
-    static class EchoCountDto {
-        public final int count;
-
-        public EchoCountDto(int count) {
-            this.count = count;
-        }
+    record EchoCountDto(int count) {
     }
 }
 
