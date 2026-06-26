@@ -21,6 +21,7 @@
     <button id="inc">Increment</button>
     <label>Led <input type="checkbox" id="led" /></label>
     <button id="refreshDb">Refresh DB</button>
+    <span id="echoCount">Echo Calls: 0</span>
   </div>
 
   <div id="chart"></div>
@@ -55,10 +56,18 @@
       return res.json();
     }
 
+    async function fetchEchoCount() {
+      const res = await fetch('/api/echo-count');
+      return res.json();
+    }
+
     async function refreshUi() {
       const counter = await fetchCounter();
       document.getElementById('display').textContent = counter.display;
       document.getElementById('led').checked = counter.switchOn;
+
+      const echoCounter = await fetchEchoCount();
+      document.getElementById('echoCount').textContent = 'Echo Calls: ' + echoCounter.count;
 
       const measurements = await fetchMeasurements();
       const series = measurements.map((m, idx) => m.value);
