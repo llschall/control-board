@@ -64,8 +64,7 @@ public class UiRestController {
     }
 
     private List<Measurement> toList(Iterable<Measurement> iterable) {
-        return (List<Measurement>) ((List<?>)
-                java.util.stream.StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList()));
+        return java.util.stream.StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList());
     }
 
     record CounterDto(int value, String display, boolean switchOn) {
