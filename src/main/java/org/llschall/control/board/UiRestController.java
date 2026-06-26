@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class UiRestController {
     private final CounterViewModel viewModel;
+    private volatile int echoCallCount = 0;
 
     public UiRestController(CounterViewModel viewModel) {
         this.viewModel = viewModel;
@@ -45,7 +46,13 @@ public class UiRestController {
 
     @GetMapping("/echo")
     public ResponseEntity<?> echo(@RequestParam String text) {
-        return ResponseEntity.ok(new EchoDto(text));
+        echoCallCount++;
+        return ResponseEntity.ok(new EchoDto(text, echoCallCount));
+    }
+
+    @GetMapping("/echo-count")
+    public ResponseEntity<?> getEchoCount() {
+        return ResponseEntity.ok(new EchoCountDto(echoCallCount));
     }
 
     private List<MeasurementDto> toDtoList(Iterable<Measurement> measurements) {
@@ -86,9 +93,19 @@ public class UiRestController {
 
     static class EchoDto {
         public final String text;
+        public final int count;
 
-        public EchoDto(String text) {
+        public EchoDto(String text, int count) {
             this.text = text;
+            this.count = count;
+        }
+    }
+
+    static class EchoCountDto {
+        public final int count;
+
+        public EchoCountDto(int count) {
+            this.count = count;
         }
     }
 }
