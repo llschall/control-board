@@ -1,0 +1,41 @@
+{
+  "name": "echo",
+  "description": "Calls the echo endpoint which returns an incrementing counter. Each call increments the counter by 1.",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "base_url": {
+        "type": "string",
+        "description": "The base URL of the control-board API (default: http://localhost:8080)",
+        "default": "http://localhost:8080"
+      }
+    },
+    "required": []
+  },
+  "examples": [
+    {
+      "input": {},
+      "output": {
+        "count": 1
+      }
+    },
+    {
+      "input": {},
+      "output": {
+        "count": 2
+      }
+    }
+  ],
+  "method": "GET",
+  "endpoint": "/api/echo",
+  "response_schema": {
+    "type": "object",
+    "properties": {
+      "count": {
+        "type": "integer",
+        "description": "The current echo call count"
+      }
+    },
+    "required": ["count"]
+  }
+}
