@@ -9,8 +9,8 @@
 # Public documentation: https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/about-dependency-review#dependency-review-enforcement
 name: 'Dependency review'
 on:
-  pull_request:
-    branches: [ "main" ]
+  # Run this on any pull request so dependency review runs for PR branches and forked PRs
+  pull_request: {}
 
 # If using a dependency submission action in this workflow this permission will need to be set to:
 #
@@ -34,6 +34,8 @@ jobs:
         # Commonly enabled options, see https://github.com/actions/dependency-review-action#configuration-options for all available options.
         with:
           comment-summary-in-pr: always
-        #   fail-on-severity: moderate
-        #   deny-licenses: GPL-1.0-or-later, LGPL-2.0-or-later
-        #   retry-on-snapshot-warnings: true
+          # Consider enabling strict checks if desired
+          # fail-on-severity: moderate
+          # deny-licenses: GPL-1.0-or-later, LGPL-2.0-or-later
+          # Enable retry when snapshot warnings occur so transient snapshot resolution issues don't fail review
+          retry-on-snapshot-warnings: true
