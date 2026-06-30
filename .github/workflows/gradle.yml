@@ -8,10 +8,11 @@
 name: Java CI with Gradle
 
 on:
+  # Run CI and dependency submission on pushes and pull requests for any branch
+  # This ensures dependency graph submission occurs for PR branches (feature branches) as they are updated.
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches: ["**"]
+  pull_request: {}
 
 jobs:
   build:
